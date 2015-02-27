@@ -40,9 +40,9 @@ def Backward(umbrella, b):
 def PartB(e):
 	prob_Of_Rain = startProb
 	for i in e: #itererer over alle dager en har informasjon om paraplyen.
-		#print 'i', i
 		prob_Of_Rain = forward(i, prob_Of_Rain) #update prob_of_rain basert paa eq. 12
-	return np.transpose(prob_Of_Rain)
+		print 'forward: ', prob_Of_Rain, '\n'
+	return 'Svar: ', np.transpose(prob_Of_Rain)
 
 def forwardBackward(e):
 	n = len(e) #antall dager med kunnskap om paraply
@@ -57,7 +57,10 @@ def forwardBackward(e):
 	for i in range(n-1, -1, -1):#iterer backward
 		sv[i] = normalise( np.multiply( prob_Of_Rain[i+1], b ) )
 		b = Backward(e[i], b)
-	return sv[0]
- 
-print 'Part B:', PartB([1, 1, 0, 1, 1]), '\n'
-print 'Part C:', forwardBackward([1, 1, 0, 1, 1])
+		print 'Backward: ', b, '\n' 
+	return 'Svar: ', sv[0]
+print 'Part B:' 
+print PartB([1, 1, 0, 1, 1]), '\n\n\n'
+
+print 'Part C:'
+print forwardBackward([1, 1, 0, 1, 1])
