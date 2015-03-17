@@ -1,6 +1,6 @@
 #Exercise 4
 # Create tree: http://ironcreek.net/phpsyntaxtree/
-
+from __future__ import division
 import math as m
 import random as r
 
@@ -9,15 +9,27 @@ class node():
 		self.data = data
 		self.children = {}
 
-	#def print_tree()
-
+	def getTreeStructure(self):
+		print 'len', len(self.children)
+		if len(self.children) == 0:
+			return "[" + str(self.data) + "]"
+		else:
+			print 'self.data', str(self.data)
+			temp = "[" + str(self.data) + " "
+		
+		for k, v in self.children.items():
+			print "k", k
+			print "v", v
+			print "taest", self.children[k]
+			temp += self.children[k].getTreeStructure()
+		
+		return temp + "]"
 
 def read_from_file(name):
 	liste = []
-	fil = open("Git/TDT4171/Exercise4/data/"+name+".txt", 'r')
+	fil = open(name, 'r')
 	for line in fil.readlines():
 		liste.append(line.rstrip("\n").split("\t"))
-	#print_list(liste)
 	return liste
 
 def print_list(l):
@@ -44,29 +56,45 @@ def Plurality(examples):
 def same_classification(examples):
 	classification = examples[0][-1]
 	for n in xrange(1, len(examples)):
-		if n[-1] != classification:
+		if examples[n][-1] != classification:
 			return False
 	return True
 
 def B(q):
-	if q = 0: 
+	#print "q", q
+	if q == 0.0: 
 		return q
 	else:
 		return -( ( q*m.log(q, 2) ) + ( (1.0-q)*m.log((1.0-q), 2) ) )
 
 def importance(data, attributes):
-	attribute_entropy = [None]*len(attributes)
+	print "attributelistavitarinn", attributes
+	attribute_entropy = {}
+	print "attribute list", attribute_entropy
 
 	for attribute in attributes:
 		count = 0
 		for liste in data:
 			if liste[attribute] == data[0][attribute]:
 				count += 1
-		attribute_entropy[attribute] = B(count/len(data))
-	return min(attribute_entropy)
+		print "attribute", attribute
+		print "B", float( count/len(data)), count
+		attribute_entropy[attribute] = B(float( count/len(data) ) )
+	
+	print attribute_entropy
+	
+	
+	minimum = 1.1
+	index = None
+	for n in attribute_entropy:
+		if attribute_entropy[n] < minimum:
+			minimum = attribute_entropy[n]
+			index = n
+	print "N", index
+	print '--------------------------------------------------------------------------------'
+	return index
 
-
-def decision_tree_learinng(examples, attributes, parent_examples):
+def decision_tree_learinng(examples, attributes, parent_examples, random_importance):
 	if not examples:
 		return Plurality(parent_examples)
 	elif same_classification(examples):
@@ -74,29 +102,33 @@ def decision_tree_learinng(examples, attributes, parent_examples):
 	elif not attributes:
 		return Plurality(examples)
 	else:
-		A = importance(examples, attributes)
+		if random_importance:
+			A = attributes[ r.randint(0, len(attributes)-1) ]
+		else:
+			A = importance(examples, attributes)
+		
 		tree = node(A)
 		attributes.remove(A)
+		print "after remove", attributes
+		
 		for n in xrange(1,3):
 			liste = []
 			for e in examples:
 				if int(e[A]) == n:
 					liste.append(e)
-			sub_tree = decision_tree_learinng(liste, list(attributes), examples)
-			tree.children += {n: sub_tree}
-
-
-
-
-
+			sub_tree = decision_tree_learinng(liste, list(attributes), examples, random_importance)
+			tree.children[n] = sub_tree
+	return tree
 
 
 def main():
-	test = read_from_file("test")
-	print_list(test)
-	training = read_from_file("training")
+	test = read_from_file("Git/TDT4171/Exercise4/data/test.txt")
+	training = read_from_file("Git/TDT4171/Exercise4/data/training.txt")
+	#print_list(test)
 	#print "\n"+"\n"
 	#print_list(training)
-
+	tree = decision_tree_learinng(training, range( len(training[0])-1 ), [], False)
+	print "************************************************************************"
+	print tree.getTreeStructure()
 
 main()
