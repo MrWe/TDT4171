@@ -6,6 +6,8 @@ class node():
 		self.data = data
 		self.children = {}
 
+	#def print_tree()
+
 
 def read_from_file(name):
 	liste = []
@@ -29,8 +31,16 @@ def decision_tree_learinng(examples, attributes, parent_examples):
 		return Plurality(examples)
 	else:
 		A = importance(a, examples)
-		tree = 
-		for n in 
+		tree = node(A)
+		attributes.remove(A)
+		for n in xrange(1,3):
+			liste = []
+			for e in examples:
+				if int(e[A]) == n:
+					liste.append(e)
+			sub_tree = decision_tree_learinng(liste, list(attributes), examples)
+			tree.children += {n: sub_tree}
+
 
 
 
@@ -38,7 +48,8 @@ def decision_tree_learinng(examples, attributes, parent_examples):
 
 
 def main():
-	read_from_file("test")
+	test = read_from_file("test")
+	print_list(test)
 	print "\n"+"\n"
 	read_from_file("training")
 
