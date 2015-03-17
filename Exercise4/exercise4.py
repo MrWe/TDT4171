@@ -3,7 +3,7 @@
 
 import math as m
 import random as r
-debug = False
+debug = True
 
 class node():
 	def __init__(self, data):
@@ -134,17 +134,36 @@ def decision_tree_learinng(examples, attributes, parent_examples, random_importa
 	return tree
 
 
+def classify(root, line):
+        current = root
+        while current.children:
+                current = current.children[int(line[current.data])]
+        return current.data
+
+
+def run_tests(tree, data):
+        correct_tests = 0
+        for line in data:
+                if line[-1] == classify(tree, line):
+                        correct_tests += 1
+        print "Correct / number of tests = ", correct_tests, "/", len(data)
+
 def main():
 	test = read_from_file("Git/TDT4171/Exercise4/data/test.txt")
 	training = read_from_file("Git/TDT4171/Exercise4/data/training.txt")
-	#print_list(test)
-	#print "\n"+"\n"
-	#print_list(training)
+	
+	if debug:
+		print_list(test)
+		print "\n"+"\n"
+		print_list(training)
+		print "************************************************************************"
+	
 	tree = decision_tree_learinng(training, range( len(training[0])-1 ), [], False)
-	print "************************************************************************"
 	print tree.print_Tree()
-	print
+	run_tests(tree, test)
+	print "random: "
 	tree = decision_tree_learinng(training, range( len(training[0])-1 ), [], True)
+	run_tests(tree, test)
 	print tree.print_Tree()
 
 main()
